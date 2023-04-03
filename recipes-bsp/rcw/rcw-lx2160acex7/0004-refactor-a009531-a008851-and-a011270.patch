@@ -1,4 +1,4 @@
-From c7c3ed47f1de7c20de348a6ca5fe0d5a18912f4b Mon Sep 17 00:00:00 2001
+From 6f2f010db94995c5efa4b9898df7041143d9c80c Mon Sep 17 00:00:00 2001
 From: Rabeeh Khoury <rabeeh@solid-run.com>
 Date: Mon, 23 Mar 2020 12:16:13 +0200
 Subject: [PATCH 4/4] refactor a009531, a008851 and a011270
@@ -11,7 +11,9 @@ of the device.
 Upstream-Status: Inappropriate [Solid-Run BSP]
 
 Signed-off-by: Rabeeh Khoury <rabeeh@solid-run.com>
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 ---
+
  lx2160asi/a009531_a008851.rcw | 96 +++++++++++++++++++++++++++++++++++
  lx2160asi/a011270.rcw         |  6 +++
  rcw.py                        | 28 ++++++++++
@@ -138,10 +140,10 @@ index 0dc774d..5bd5558 100644
  write 0x03500688,0x00000001
  write 0x03600688,0x00000001
 diff --git a/rcw.py b/rcw.py
-index 863f755..c2d06f6 100755
+index e7d3795..bcd088d 100755
 --- a/rcw.py
 +++ b/rcw.py
-@@ -328,6 +328,34 @@ def build_pbi(lines):
+@@ -330,6 +330,34 @@ def build_pbi(lines):
              v2 = struct.pack(endianess + 'L', p2)
              subsection += v1
              subsection += v2
@@ -174,8 +176,8 @@ index 863f755..c2d06f6 100755
 +            subsection += v1
 +            subsection += v2
          elif op == 'awrite':
-             if p1 == None or p2 == None:
-                 print('Error: "awrite" instruction requires two parameters')
+             if opsize == '.b5':
+                 # altconfig write with B=5 (16 bytes)
 -- 
-2.17.1
+2.39.2
 

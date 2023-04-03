@@ -7,16 +7,20 @@ PV = "1.5+git${SRCPV}"
 
 inherit deploy
 
-DEPENDS += "u-boot-mkimage-native u-boot openssl openssl-native mbedtls rcw cst-native"
+DEPENDS += "u-boot-mkimage-native u-boot openssl openssl-native rcw qoriq-cst-native"
 DEPENDS:append:lx2160a = " ddr-phy"
 do_compile[depends] += "u-boot:do_deploy rcw:do_deploy uefi:do_deploy"
 
 S = "${WORKDIR}/git"
 
-SRC_URI = "git://source.codeaurora.org/external/qoriq/qoriq-components/atf;nobranch=1 \
+SRC_URI = "git://github.com/nxp-qoriq/atf;protocol=https;nobranch=1 \
     file://0001-Clean-usage-of-void-pointers-to-access-symbols.patch \
 "
 SRCREV = "5ae5233c064e94a8bd1b4a1652a03b87b0be63f6"
+
+SRC_URI += "git://github.com/ARMmbed/mbedtls;nobranch=1;destsuffix=git/mbedtls;name=mbedtls;protocol=https"
+SRCREV_mbedtls = "0795874acdf887290b2571b193cafd3c4041a708"
+SRCREV_FORMAT = "atf"
 
 COMPATIBLE_MACHINE = "(qoriq)"
 
@@ -42,6 +46,9 @@ AS[unexport] = "1"
 LD[unexport] = "1"
 
 EXTRA_OEMAKE += "HOSTCC='${BUILD_CC} ${BUILD_CPPFLAGS} ${BUILD_CFLAGS} ${BUILD_LDFLAGS}'"
+EXTRA_OEMAKE += "\
+    ${@bb.utils.contains('DISTRO_FEATURES', 'arm-cot', 'GENERATE_COT=1 MBEDTLS_DIR=${S}/mbedtls', '', d)} \
+"
 
 BOOTTYPE ?= "nor nand qspi flexspi_nor sd emmc"
 OTABOOTTYPE ?= "nor qspi flexspi_nor"
